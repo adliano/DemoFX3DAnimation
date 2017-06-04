@@ -23,59 +23,64 @@ import javafx.util.Duration;
 
 public class DemoFX3DAnimation extends Application
 {
-    Translate zAxisTrans;
-    double zPos = -60;
-    Button btRotateCamera, btRotateBox , btRotateCylinder;
-    Box box;
-    Cylinder cylinder;
-    PerspectiveCamera camera;
-
-
+    private Translate zAxisTrans;
+    private double zPos = -60;
+    private Button btRotateCamera, btRotateBox , btRotateCylinder;
+    private Box box;
+    private Cylinder cylinder;
+    private PerspectiveCamera camera;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
         primaryStage.setTitle("3D Animation FX");
+        // using FlowPane as root node with gap : 10
         FlowPane root = new FlowPane(10,10);
+        // center the nodes
         root.setAlignment(Pos.CENTER);
         Scene scene = new Scene(root,380,400);
         primaryStage.setScene(scene);
 
+        // init the buttons
         btRotateCamera = new Button("Rotate Camera");
         btRotateBox = new Button("Rotate Box");
         btRotateCylinder = new Button("Rotate Cylinder");
 
+        // camera translation
         zAxisTrans = new Translate(0,0,zPos);
-        // camera
+
+        // init the camera
         camera = new PerspectiveCamera(true);
         camera.setRotationAxis(Rotate.Y_AXIS);
         camera.getTransforms().addAll(zAxisTrans);
         camera.setFieldOfView(45);
         camera.setFarClip(120);
-        //box
+        //init the box
         box = new Box(10,20,30);
         box.setMaterial(new PhongMaterial(Color.DARKGREEN));
         box.setRotationAxis(Rotate.Y_AXIS);
-        // cylinder
+        // init the cylinder
         cylinder = new Cylinder(5,35);
         cylinder.setMaterial(new PhongMaterial(Color.FUCHSIA));
         cylinder.setRotationAxis(Rotate.Y_AXIS);
 
-        /***
+        /*
          * Cylinder Animation
          * rotate the cylinder 90 degrees horizontal
          * Translate the cylinder 10 units down (1/2 of the box size)
-         ***/
+         */
         cylinder.getTransforms().add(new Rotate(90,0,0));
 //        cylinder.getTransforms().addAll(new Translate(10,0,0));
 
-
+        // group to hold the box and the cylinder
         Group shapesGroup = new Group();
         shapesGroup.getChildren().addAll(box,cylinder);
 
+        // Sub scene to handle the group with depth buffer enable
         SubScene shapesSub = new SubScene(shapesGroup,340,340,true, SceneAntialiasing.DISABLED);
         shapesSub.setCamera(camera);
+        shapesSub.setFill(Color.BLACK);
 
         RotateTransition rotateCamera = new RotateTransition(new Duration(2000), camera);
         rotateCamera.setCycleCount(2);
